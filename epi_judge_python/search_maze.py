@@ -1,7 +1,7 @@
 import collections
 import copy
 import functools
-from typing import List
+from typing import List, Tuple
 
 from test_framework import generic_test
 from test_framework.test_failure import TestFailure
@@ -12,10 +12,38 @@ WHITE, BLACK = range(2)
 Coordinate = collections.namedtuple('Coordinate', ('x', 'y'))
 
 
+def get_neighbors(coordinate: Coordinate) -> Tuple[Coordinate]:
+    return (
+        Coordinate(coordinate.x + 1, coordinate.y),
+        Coordinate(coordinate.x - 1, coordinate.y),
+        Coordinate(coordinate.x, coordinate.y + 1),
+        Coordinate(coordinate.x, coordinate.y - 1),
+    )
+
+
 def search_maze(maze: List[List[int]], s: Coordinate,
                 e: Coordinate) -> List[Coordinate]:
-    # TODO - you fill in here.
-    return []
+    q = collections.deque([(s, None),])
+    visited = {}
+    path = []
+    while q:
+        now, parent = q.popleft()
+        visited[now] = parent
+        if now == e: break
+
+        for neighbor in get_neighbors(now):
+            if neighbor not in visited and path_element_is_feasible(maze, now, neighbor):
+                q.append((neighbor, now))
+    
+    if e not in visited:
+        return path
+
+    cur = e
+    while cur:
+        path.append(cur)
+        cur = visited[cur]
+    path.reverse()
+    return path
 
 
 def path_element_is_feasible(maze, prev, cur):

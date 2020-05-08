@@ -2,8 +2,10 @@ from test_framework import generic_test
 
 
 def gcd(x: int, y: int) -> int:
-    # TODO - you fill in here.
-    return 0
+    if y < x: return gcd(y, x)
+    while y > 0:
+        x, y = y, x % y
+    return x
 
 
 if __name__ == '__main__':
